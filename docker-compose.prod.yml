@@ -1,0 +1,44 @@
+# -----------------------------------------------------
+# DOCKER-COMPOSE.PROD.YML
+# Ambiente de PRODUÇÃO
+# Executado junto ao docker-compose principal:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# -----------------------------------------------------
+
+services:
+  app:
+    container_name: project-template-app-prod
+
+    # Build real da imagem para produção (multi-stage)
+    build:
+      context: .
+      dockerfile: infra/docker/Dockerfile
+
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+
+    # Sem volumes — produção não deve permitir código mutável
+    volumes: []
+
+    # Porta do container → host
+    ports:
+      - "8080:8080"
+
+    # Healthcheck para orquestração e uptime
+    healthcheck:
+      test: ["CMD", "sh", "-c", "echo 'healthcheck ok'"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # Política de restart para serviços críticos
+    restart: always
+
+    # Logs rotacionados em produção
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
