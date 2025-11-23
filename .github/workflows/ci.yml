@@ -1,0 +1,98 @@
+name: CI Pipeline
+
+# -----------------------------------------------------
+# Dispara o pipeline em push/pull_request na branch main
+# -----------------------------------------------------
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# -----------------------------------------------------
+# Variáveis globais usadas no pipeline
+# -----------------------------------------------------
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+# -----------------------------------------------------
+# Jobs
+# -----------------------------------------------------
+jobs:
+
+  # ---------------------------------------------
+  # JOB 1: Build / Test / Lint
+  # ---------------------------------------------
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar cache universal
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache
+            **/node_modules
+            **/vendor
+            **/.venv
+            **/.m2
+          key: cache-${{ runner.os }}-${{ hashFiles('**/*') }}
+
+      # ---------------------------------------------
+      # Build (genérico – você ajustará futuramente)
+      # ---------------------------------------------
+      - name: Build da aplicação (placeholder)
+        run: echo "Build executado (substituir conforme linguagem)"
+
+      # ---------------------------------------------
+      # Testes (genérico)
+      # ---------------------------------------------
+      - name: Executar testes (placeholder)
+        run: echo "Nenhum teste configurado ainda"
+
+      # ---------------------------------------------
+      # Lint / Segurança (genérico)
+      # ---------------------------------------------
+      - name: Code lint (placeholder)
+        run: echo "Nenhum linter configurado ainda"
+
+      - name: Security scan (placeholder)
+        run: echo "Nenhum scanner configurado ainda"
+
+  # ---------------------------------------------
+  # JOB 2: Docker Build & Push
+  # ---------------------------------------------
+  docker:
+    needs: [build-test]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # Login no GitHub Container Registry
+      - name: Login no GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build da imagem
+      - name: Build da imagem Docker
+        run: |
+          docker build -f infra/docker/Dockerfile -t $REGISTRY/$IMAGE_NAME:latest .
+
+      # Push para GHCR (desabilitado – ativa quando quiser)
+      - name: Push da imagem Docker
+        if: false  # Coloque "true" quando quiser ativar o push
+        run: |
+          docker push $REGISTRY/$IMAGE_NAME:latest
