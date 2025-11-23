@@ -1,0 +1,65 @@
+# -----------------------------------------
+# Universal .gitignore (para qualquer stack)
+# -----------------------------------------
+
+### Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### OS generated files
+.DS_Store
+Thumbs.db
+
+### IDEs & Editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+### Python
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+
+### Node.js
+node_modules/
+dist/
+build/
+
+### PHP / Composer
+vendor/
+composer.lock
+
+### Java / Maven / Gradle
+target/
+out/
+*.class
+
+### Rust
+target/
+
+### .NET
+bin/
+obj/
+
+### Go
+bin/
+pkg/
+
+### Docker
+*.pid
+tmp/
+
+### Environment
+.env
+.env.*
+*.local
+
+### Other build artifacts
+coverage/
+.cache/
