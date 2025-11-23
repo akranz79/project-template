@@ -1,0 +1,25 @@
+# -----------------------------------------------------
+# DOCKER-COMPOSE.OVERRIDE.YML
+# Ambiente de Desenvolvimento
+# Este arquivo é carregado automaticamente pelo Compose
+# -----------------------------------------------------
+
+services:
+  app:
+    container_name: project-template-app-dev
+    image: alpine:latest
+
+    # Sobrescreve o CMD do Dockerfile para modo dev
+    command: ["sh", "-c", "echo 'Ambiente de DEV rodando...' && tail -f /dev/null"]
+
+    # Monta o código local dentro do container
+    volumes:
+      - ./src:/app
+
+    # Porta padrão (pode alterar conforme seu projeto)
+    ports:
+      - "8080:8080"
+
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "true"
