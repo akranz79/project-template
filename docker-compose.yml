@@ -1,0 +1,49 @@
+version: "3.9"
+
+# -----------------------------------------------------
+# Extensões reutilizáveis (padrões de boas práticas)
+# -----------------------------------------------------
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+x-restart-policy: &restart-always
+  restart: always
+
+x-default-env: &default-env
+  env_file:
+    - .env
+
+# -----------------------------------------------------
+# Definição da Stack Principal
+# -----------------------------------------------------
+services:
+  # Serviço base “app” — será substituído pelo seu projeto real
+  app:
+    image: alpine:latest
+    container_name: project-template-app
+    command: ["sh", "-c", "while true; do echo 'App container OK'; sleep 60; done"]
+
+    <<: *restart-always
+    logging: *default-logging
+
+    networks:
+      - internal
+
+    volumes:
+      - ./src:/app
+
+# -----------------------------------------------------
+# Redes
+# -----------------------------------------------------
+networks:
+  internal:
+    driver: bridge
+
+# -----------------------------------------------------
+# Volumes Persistentes
+# -----------------------------------------------------
+volumes:
+  app_data:
